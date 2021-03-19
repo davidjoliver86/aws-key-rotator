@@ -12,13 +12,12 @@ keys, then automatically rotates them.
 
 ### Behavior
 Due to the AWS limit of two access/secret keys per user, the behavior of this script will
-vary depending on your situation.
+vary depending on your situation. Keep in mind that creating a new key must be done from the
 
-* *If you have only one active access key* - The existing access key will be deactivated and
-  a new one will be spun up. You'll have a new, active keypair, and your old inactive keypair.
-
-* *If you have only one inactive access key* - A new key is created. The existing key remains
-  inactive. The next run will have to delete that key to make room for a new rotation.
+* *If you have only one active access key:*
+  * The current access key credentials are used to create the new key.
+  * The old keys' credentials are then used to inactivate themselves.
+  * The new keys are written to the credentials file.
 
 * *If you have one active and one inactive key* - The current inactive key will be deleted.
   The current active key will then be inactivated to make way for the new active key. If

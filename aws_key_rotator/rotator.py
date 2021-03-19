@@ -78,6 +78,19 @@ class IAMKeyRotator:
             for key in iam.list_access_keys()["AccessKeyMetadata"]
         ]
 
+    def _create_key(self, profile_name):
+        # Instantiate session with current credentials.
+        iam = boto3.Session(profile_name=profile_name).client("iam")
+        new_key = iam.create_access_key()["AccessKey"]
+        with self._credentials() as parser:
+            parser[profile_name]["aws_access_key_id"] = new_key["AccessKeyId"]
+            parser[profile_name]["aws_secret_access_key"] = new_key["SecretAccessKey"]
+
+    def _inactivate_key(self, profile_name, access_key_id):
+        # Instantiate session with current credentials.
+        iam = boto3.Session(profile_name=profile_name).client("iam")
+        iam.update_access_key(AccessKeyId=access_key_id, Status=INACTIVE)
+
     def rotate_credentials(self, profile_name):
         """Performs IAM keypair rotation.
 
@@ -93,9 +106,11 @@ class IAMKeyRotator:
         # to delete a key due to the two key limit, we must do that first.
 
         if statuses == [True]:
-            # Deactivate current active key
-            iam.update_access_key(AccessKeyId=access_keys[0].id, Status=INACTIVE)
+            old_key = access_keys[0]
+            self._create_key(profile_name)
+            self._inactivate_key(profile_name, old_key.id)
         elif statuses in ([True, False], [False, True]):
+            # Deactivate the current active key, delete the current inactive key.
             if access_keys[0].status:
                 current_active = access_keys[0]
                 current_inactive = access_keys[1]
@@ -105,8 +120,13 @@ class IAMKeyRotator:
             iam.delete_access_key(AccessKeyId=current_inactive.id)
             iam.update_access_key(AccessKeyId=current_active.id, Status=INACTIVE)
         elif statuses in ([True, True], [False, False]):
-            # Delete key that matches one in credentials file
-            pass
+            # Delete the key that matches the one in the credentials file.
+            with self._credentials() as parser:
+                key_id = parser[profile_name]["aws_access_key_id"]
+            iam.delete_access_key(AccessKeyId=key_id)
+
+        # Create new keypair.
+        iam.create
 
     def main(self):
         for profile in self._get_rotatable_profiles():

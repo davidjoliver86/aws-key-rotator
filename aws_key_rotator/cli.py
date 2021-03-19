@@ -1,5 +1,6 @@
 import os
 import argparse
+from . import rotator
 
 DEFAULT_CREDENTIALS_FILE = os.path.expanduser("~/.aws/credentials")
 
@@ -22,8 +23,8 @@ def parse_args():
         "--exclude",
         help="Comma separated list of profile names, will rotate all profiles excluding specified",
     )
-    parser.parse_args()
+    return parser.parse_args()
 
 
 def main():
-    parse_args()
+    rotator.IAMKeyRotator(parse_args()).main()

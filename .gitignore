@@ -1,0 +1,4 @@
+.python-version
+*.code-workspace
+.vscode/
+__pycache__/

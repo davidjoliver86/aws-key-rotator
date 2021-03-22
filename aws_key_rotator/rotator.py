@@ -35,7 +35,7 @@ class IAMKeyRotator:
         """
         parser = ConfigParser()
         with open(self.config.credentials, "r") as fp:
-            parser.read_file(fp)
+            parser.read_string(fp.read())
         yield parser
         with open(self.config.credentials, "w") as fp:
             parser.write(fp)
@@ -72,6 +72,10 @@ class IAMKeyRotator:
         return profiles
 
     @staticmethod
+    def _get_boto_session(profile_name):
+        return boto3.Session(profile_name=profile_name).client("iam")
+
+    @staticmethod
     def _get_access_keys(iam):
         return [
             AccessKey(id=key["AccessKeyId"], status=key["Status"] == ACTIVE)
@@ -80,7 +84,7 @@ class IAMKeyRotator:
 
     def _create_key(self, profile_name):
         # Instantiate session with current credentials.
-        iam = boto3.Session(profile_name=profile_name).client("iam")
+        iam = self._get_boto_session(profile_name)
         new_key = iam.create_access_key()["AccessKey"]
         with self._credentials() as parser:
             parser[profile_name]["aws_access_key_id"] = new_key["AccessKeyId"]
@@ -88,7 +92,7 @@ class IAMKeyRotator:
 
     def _inactivate_key(self, profile_name, access_key_id):
         # Instantiate session with current credentials.
-        iam = boto3.Session(profile_name=profile_name).client("iam")
+        iam = self._get_boto_session(profile_name)
         iam.update_access_key(AccessKeyId=access_key_id, Status=INACTIVE)
 
     def rotate_credentials(self, profile_name):
@@ -98,7 +102,7 @@ class IAMKeyRotator:
             profile_name (str): The named section in the credentials file. Will be used
             to instantiate the boto3 connection.
         """
-        iam = boto3.Session(profile_name=profile_name).client("iam")
+        iam = self._get_boto_session(profile_name)
         access_keys = self._get_access_keys(iam)
         statuses = [access_key.status for access_key in access_keys]
 

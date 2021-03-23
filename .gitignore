@@ -11,3 +11,6 @@ __pycache__/
 # testing
 .coverage
 .tox/
+
+# build
+dist/

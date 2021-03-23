@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aws-key-rotator"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["davido-nw <david@nebulaworks.com>"]
 
@@ -18,6 +18,9 @@ tox = "^3.23.0"
 
 [tool.poetry.scripts]
 aws-key-rotator = "aws_key_rotator.cli:main"
+
+[tool.poetry.urls]
+repository = "https://github.com/davidjoliver86/aws-key-rotator"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

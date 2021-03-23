@@ -4,6 +4,9 @@ from . import rotator
 
 DEFAULT_CREDENTIALS_FILE = os.path.expanduser("~/.aws/credentials")
 
+# Removes some of the extra verbosity in the log messages.
+os.environ["COLOREDLOGS_LOG_FORMAT"] = "%(message)s"
+
 
 def parse_args():
     parser = argparse.ArgumentParser()

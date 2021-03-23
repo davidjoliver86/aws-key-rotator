@@ -176,4 +176,4 @@ def test_simple_rotation_both_active(config, mock_iam_two_keys_both_active):
 
 
 def test_version():
-    assert __version__ == "0.1.0"
+    assert __version__ == "0.1.2"

@@ -1,4 +1,13 @@
+# pyenv
 .python-version
+
+# vscode
 *.code-workspace
 .vscode/
+
+# cache
 __pycache__/
+
+# testing
+.coverage
+.tox/

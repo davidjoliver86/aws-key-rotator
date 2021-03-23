@@ -13,6 +13,9 @@ def parse_args():
         default=DEFAULT_CREDENTIALS_FILE,
         help="Path to AWS credentials file",
     )
+    parser.add_argument(
+        "-v", "--verbose", action="store_true", default=False, help="Verbose output"
+    )
 
     include_or_exclude_list = parser.add_mutually_exclusive_group()
     include_or_exclude_list.add_argument(

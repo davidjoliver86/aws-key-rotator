@@ -7,11 +7,14 @@ authors = ["davido-nw <david@nebulaworks.com>"]
 [tool.poetry.dependencies]
 python = "^3.6"
 boto3 = "^1.17.32"
+coloredlogs = "^15.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
 black = "^20.8b1"
 pylint = "^2.7.2"
+pytest-cov = "^2.11.1"
+tox = "^3.23.0"
 
 [tool.poetry.scripts]
 aws-key-rotator = "aws_key_rotator.cli:main"
